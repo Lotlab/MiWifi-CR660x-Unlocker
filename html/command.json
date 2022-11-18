@@ -1,0 +1,1 @@
+{"token":"; nvram set ssh_en=1; nvram commit; sed -i 's/channel=.*/channel=\"debug\"/g' /etc/init.d/dropbear; /etc/init.d/dropbear start;","code":0}

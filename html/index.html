@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@2.1.0/build/pure-min.css"
+        integrity="sha384-yHIFVG6ClnONEA5yB5DJXfW2/KC173DIQrYoZMEtBvGzmf0PKiGyNEqe9N6BNDBH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@2.1.0/build/grids-responsive-min.css">
+    <title>Mi Unlocker</title>
+    <style>
+        .content,
+        footer {
+            max-width: 1000px;
+            margin: auto;
+            padding: 0 20px;
+        }
+
+        #url {
+            width: calc(100% - 40px);
+        }
+
+        input+span {
+            padding-right: 30px;
+        }
+
+        input:invalid+span::after {
+            position: absolute;
+            content: "✖";
+            padding-left: 5px;
+        }
+
+        input:valid+span::after {
+            position: absolute;
+            content: "✓";
+            padding-left: 5px;
+        }
+
+        .content {
+            min-height: calc(100vh - 40px);
+            padding-top: 10px;
+        }
+
+        footer {
+            height: 30px;
+            line-height: 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="content">
+        <h1>Miwifi Unlocker</h1>
+        <p>解锁指南</p>
+        <ol>
+            <li>
+                <p>
+                    <a href="/cgi-bin/luci/api/xqsystem/token" target="_blank">点击这里</a>确认 Token 访问正常
+                </p>
+            </li>
+            <li>
+                <p>登录到你的小米路由器，将页面地址粘贴到下面的输入框中</p>
+                <input type="text" name="url" id="url" required placeholder="http://..."
+                    pattern="https?://.+?/cgi-bin/luci/;stok=.+" />
+                <span></span>
+            </li>
+            <li>
+                <p><a href="#" target="_blank" id="connect_url">点击这里</a>将路由器连接到解锁工具提供的WIFI。返回代码为0表示连接成功。</p>
+            </li>
+            <li>
+                <p><a href="#" target="_blank" id="unlock_url">点击这里</a>开始解锁。返回代码为0表示命令执行成功。</p>
+            </li>
+        </ol>
+        <p>
+            解锁完毕后，你应该能够正常使用SSH访问路由器了。
+        </p>
+    </div>
+    <footer>
+        &copy; 2022 <a href="https://lotlab.org" target="_blank">Lotlab</a> | <a
+            href="https://github.com/Lotlab/MiWifi-CR660x-Unlocker" target="_blank">Github</a>
+    </footer>
+    <script>
+        const urlElement = document.getElementById('url');
+        const connectUrl = document.getElementById('connect_url');
+        const unlockUrl = document.getElementById('unlock_url');
+
+        urlElement.addEventListener('input', onUrlChange);
+
+        function onUrlChange(e) {
+            const text = urlElement.value;
+            const regex = /(https?:\/\/.+?)\/cgi-bin\/luci\/;stok=(.+?)\//;
+            const result = regex.exec(text);
+            if (result && result.length > 0) {
+                const prefix = result[1] + "/cgi-bin/luci/;stok=" + result[2];
+
+                connectUrl.setAttribute("href", prefix + "/api/misystem/extendwifi_connect?ssid=miwifi_unlocker&password=password");
+                unlockUrl.setAttribute("href", prefix + "/api/xqsystem/oneclick_get_remote_token?username=xxx&password=xxx&nonce=xxx");
+            } else {
+                console.log("Not match");
+            }
+        }
+    </script>
+</body>
+
+</html>
